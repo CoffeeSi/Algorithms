@@ -1,35 +1,78 @@
-public class MyLinkedList<T>{
+public class MyLinkedList<T extends Comparable<T>>{
     private MyNode<T> head;
     private MyNode<T> tail;
-    private int length;
+    private int size;
+
+    private static class MyNode<T> {
+        T data;
+        MyNode<T> next;
+    
+        public MyNode(T data) {
+            this.data = data;
+        }
+    }
 
     public MyLinkedList() {
         head = null;
         tail = null;
-        length = 0;
+        size = 0;
     }
 
     public void add(T item) {
-        MyNode<T> newNode = new MyNode<T>(item);
-        if (head == null) {
+        MyNode<T> newNode = new MyNode<>(item);
+        if (size == 0) {
             head = newNode;
+            tail = newNode;
         } else {
-            MyNode<T> current = head;
-            while (current.next != null) {
-                current = current.next;
-            }
-            current.next = newNode;
+            tail.next = newNode;
+            tail = newNode;
         }
-        length++;
+        size++;
     }
 
-    public void set(int index, T item) {
-        MyNode<T> currentNode = new MyNode<T>(item);
-        for (int i = 0; i < length; i++) {
-            if (i == index) {
-                head.data = currentNode.data;
+    public void add(int index, T item) {
+        if (index == 0) {
+            addFirst(item);
+        }
+        else if (index == size) {
+            addLast(item);
+        } 
+        else {
+            MyNode<T> newNode = new MyNode<>(item);
+            MyNode<T> currentNode = head;
+            for (int i = 0; i < index-1; i++) {
+                currentNode = currentNode.next;
             }
-            head = head.next;
+            newNode.next = currentNode.next;
+            currentNode.next = newNode;
+            size++;
+        }
+    }
+
+    public void addFirst(T item) {
+        MyNode<T> newNode = new MyNode<>(item);
+        newNode.next = head;
+        head = newNode;
+        if (size == 0) {
+            tail = head;
+        }
+        size++;
+    }
+
+    public void addLast(T item) {
+        add(item);
+    } 
+
+    public void set(int index, T item) {
+        MyNode<T> currentNode = head;
+        for (int i = 0; i < size; i++) {
+            if (i == index) {
+                currentNode.data = item;
+            }
+            currentNode = currentNode.next;
+        }
+        if (index == size) {
+            tail.data = item;
         }
     }
 
@@ -41,29 +84,72 @@ public class MyLinkedList<T>{
         return currentNode.data;
     }
 
+    public T getFirst() {
+        return head.data;
+    }
+
+    public T getLast() {
+        return tail.data;
+    }
+
     public void remove(int index) {
-        MyNode<T> currentNode = head;
         if (index == 0) {
-            head = head.next;
-            if (head == null) {
-                tail = null;
-            }
+            removeFirst();
         }
         else {
+            MyNode<T> currentNode = head;
             for (int i = 0; i < index - 1; i++) {
                 currentNode = currentNode.next;   
             }
             currentNode.next = currentNode.next.next;
-            if (index == length - 1) {
+            if (index == size - 1) {
                 tail = currentNode;
             }
         }
-        length--;
+        size--;
+    }
+
+    public void removeFirst() {
+        if (size == 0) return;
+        head = head.next;
+        if (head == null) tail = null;
+        size--;
+    }
+
+    public void removeLast() {
+        if (size == 0) return;
+        if (size == 1) {
+            head = null;
+            tail = null;
+        } else {
+            MyNode<T> currentNode = head;
+            for (int i = 0; i < size-2; i++) {
+                currentNode = currentNode.next;
+            }
+            currentNode.next = null;
+            tail = currentNode;
+        }
+        size--;
+    }
+
+    public void sort() {
+        MyNode<T> currentNode = head;
+        for (int i = 0; i < size; i++) {
+            currentNode = head;
+            for (int j = 0; j < size-i-1; j++) {
+                if (currentNode.data.compareTo(currentNode.next.data) > 0) {
+                    T temp = currentNode.data;
+                    currentNode.data = currentNode.next.data;
+                    currentNode.next.data = temp;
+                }
+                currentNode = currentNode.next;
+            }
+        }
     }
 
     public int indexOf(Object object) {
         MyNode<T> currentNode = head;
-        for (int i = 0; i < length; i++) {
+        for (int i = 0; i < size; i++) {
             if (object.equals(currentNode.data)) {
                 return i;
             }
@@ -74,7 +160,7 @@ public class MyLinkedList<T>{
 
     public boolean exists(Object object) {
         MyNode<T> currentNode = head;
-        for (int i = 0; i < length; i++) {
+        for (int i = 0; i < size; i++) {
             if (object.equals(currentNode.data)) {
                 return true;
             }
@@ -86,8 +172,8 @@ public class MyLinkedList<T>{
     public void clear() {
         head = null;
         tail = null;
-        length = 0;
+        size = 0;
     }
     
-    public int size() { return length; }
+    public int size() { return size; }
 }
