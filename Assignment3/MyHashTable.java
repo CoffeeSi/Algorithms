@@ -40,7 +40,9 @@ public class MyHashTable<K, V> {
         for (int i = 0; i < str.length(); i++) {
             hash = str.charAt(i) + (31 * hash);
         }
-        return Math.abs(hash % M);
+        hash = hash % M;
+        hash = ( hash < 0 ) ? hash *= -1 : hash;
+        return hash;
     }
 
     public void put(K key, V value) {

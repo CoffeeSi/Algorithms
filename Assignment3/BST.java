@@ -134,9 +134,7 @@ public class BST<K extends Comparable<K>, V> {
         size--;
     }
 
-    public int getSize() {
-        return size;
-    }
+    public int getSize() { return size; }
 
     // public void inOrder() {
     //     inOrder(root);
